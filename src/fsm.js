@@ -3,30 +3,56 @@ class FSM {
      * Creates new FSM instance.
      * @param config
      */
-    constructor(config) {}
+    constructor(config) {
+        this._state = config.initial;
+        this.prev;
+    }
 
     /**
      * Returns active state.
      * @returns {String}
      */
-    getState() {}
+    getState() {
+        return this._state;
+    }
 
     /**
      * Goes to specified state.
      * @param state
      */
-    changeState(state) {}
-
+    changeState(state) {
+        this.prev = this._state;
+        switch (state){
+            case 'hungry': this._state = 'hungry'; break;
+            case 'normal': this._state = 'normal'; break;
+            case 'sleeping': this._state = 'sleeping'; break;
+            case 'busy': this._state = 'busy'; break;
+            default: throw new Er ("Error");
+        }
+    }
     /**
      * Changes state according to event transition rules.
      * @param event
      */
-    trigger(event) {}
+    trigger(event) {
+        this.prev = this._state;
+        switch(event){
+            case 'get_hungry': this._state = 'hungry';
+            case 'get_tired': this._state = 'sleeping';
+            case 'get_up': 
+            case 'eat': this._state = 'normal';
+            case 'study': this._state = 'busy';
+            //default: throw new Err ("Error");
+        }
+    }
 
     /**
      * Resets FSM state to initial.
      */
-    reset() {}
+    reset() {
+        this._state = 'normal';
+        return this._state;
+    }
 
     /**
      * Returns an array of states for which there are specified event transition rules.
@@ -41,7 +67,10 @@ class FSM {
      * Returns false if undo is not available.
      * @returns {Boolean}
      */
-    undo() {}
+    undo() {
+        if(this.prev) return true;
+        else return false;
+    }
 
     /**
      * Goes redo to state.
