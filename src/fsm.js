@@ -27,7 +27,7 @@ class FSM {
             case 'normal': this._state = 'normal'; break;
             case 'sleeping': this._state = 'sleeping'; break;
             case 'busy': this._state = 'busy'; break;
-            default: throw new Er ("Error");
+            default: throw new Er ("Error"); break;
         }
     }
     /**
@@ -36,13 +36,13 @@ class FSM {
      */
     trigger(event) {
         this.prev = this._state;
-        switch(event){
-            case 'get_hungry': this._state = 'hungry';
-            case 'get_tired': this._state = 'sleeping';
-            case 'get_up': 
-            case 'eat': this._state = 'normal';
-            case 'study': this._state = 'busy';
-            //default: throw new Err ("Error");
+        switch(event) {
+            case 'get_hungry': this._state = 'hungry'; break;
+            case 'get_tired': this._state = 'sleeping'; break;
+            case 'get_up': this._state = 'normal'; break;
+            case 'eat': this._state = 'normal'; break;
+            case 'study': this._state = 'busy'; break;
+            default: throw new Er ("Error");
         }
     }
 
@@ -60,7 +60,14 @@ class FSM {
      * @param event
      * @returns {Array}
      */
-    getStates(event) {}
+    getStates(event) {
+        switch(event) {
+            case 'get_hungry': return ['busy', 'sleeping'];
+            case 'study': return ['normal'];
+            case undefined: return ['normal', 'busy', 'hungry', 'sleeping'];
+            default:  return [];
+        }
+    }
 
     /**
      * Goes back to previous state.
@@ -68,7 +75,13 @@ class FSM {
      * @returns {Boolean}
      */
     undo() {
-        if(this.prev) return true;
+        var st;
+        if(this.prev) {
+            st = this._state;
+            this._state = this.prev;
+            this.prev = st;
+            return true;
+        }
         else return false;
     }
 
@@ -77,12 +90,24 @@ class FSM {
      * Returns false if redo is not available.
      * @returns {Boolean}
      */
-    redo() {}
+    redo() {
+        var st;
+        if(this.prev) {
+            st = this._state;
+            this._state = this.prev;
+            this.prev = st;
+            return true;
+        }
+        else return false;
+    }
+    
 
     /**
      * Clears transition history
      */
-    clearHistory() {}
+    clearHistory() {
+        this.prev = undefined;
+    }
 }
 
 module.exports = FSM;
