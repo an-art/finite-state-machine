@@ -6,6 +6,7 @@ class FSM {
     constructor(config) {
         this._state = config.initial;
         this.prev;
+        this.medium;
     }
 
     /**
@@ -22,6 +23,7 @@ class FSM {
      */
     changeState(state) {
         this.prev = this._state;
+        this.medium = undefined;
         switch (state){
             case 'hungry': this._state = 'hungry'; break;
             case 'normal': this._state = 'normal'; break;
@@ -36,6 +38,7 @@ class FSM {
      */
     trigger(event) {
         this.prev = this._state;
+        this.medium = undefined;
         switch(event) {
             case 'get_hungry': this._state = 'hungry'; break;
             case 'get_tired': this._state = 'sleeping'; break;
@@ -75,11 +78,10 @@ class FSM {
      * @returns {Boolean}
      */
     undo() {
-        var st;
         if(this.prev) {
-            st = this._state;
+            this.medium = this._state;
             this._state = this.prev;
-            this.prev = st;
+            this.prev = this.medium;
             return true;
         }
         else return false;
@@ -91,11 +93,10 @@ class FSM {
      * @returns {Boolean}
      */
     redo() {
-        var st;
-        if(this.prev) {
-            st = this._state;
+        if(this.medium) {
+            this.medium = this._state;
             this._state = this.prev;
-            this.prev = st;
+            this.prev = this.medium;
             return true;
         }
         else return false;
