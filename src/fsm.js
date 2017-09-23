@@ -40,11 +40,31 @@ class FSM {
         this.prev = this._state;
         this.medium = undefined;
         switch(event) {
-            case 'get_hungry': this._state = 'hungry'; break;
-            case 'get_tired': this._state = 'sleeping'; break;
-            case 'get_up': this._state = 'normal'; break;
-            case 'eat': this._state = 'normal'; break;
-            case 'study': this._state = 'busy'; break;
+            case 'get_hungry': 
+                if (this.prev === 'busy' || this.prev === 'sleeping') {
+                    this._state = 'hungry';
+                    break;
+                } else throw new Er ("Error");
+            case 'get_tired': 
+                if (this.prev === 'busy') {
+                    this._state = 'sleeping'; 
+                    break;
+                } 
+            case 'get_up': 
+                if (this.prev === 'sleeping') {
+                    this._state = 'normal'; 
+                    break;
+                } else throw new Er ("Error");
+            case 'eat':
+                if (this.prev === 'hungry') {
+                    this._state = 'normal'; 
+                    break;
+                } else throw new Er ("Error");
+            case 'study': 
+                if (this.prev === 'normal') {
+                    this._state = 'busy'; 
+                    break;
+                } else throw new Er ("Error");
             default: throw new Er ("Error");
         }
     }
@@ -78,7 +98,7 @@ class FSM {
      * @returns {Boolean}
      */
     undo() {
-        if(this.prev) {
+        if(this.prev && this._state!='normal') {
             this.medium = this._state;
             this._state = this.prev;
             this.prev = this.medium;
@@ -93,7 +113,7 @@ class FSM {
      * @returns {Boolean}
      */
     redo() {
-        if(this.medium) {
+        if(this.medium && this.medium!='normal') {
             this.medium = this._state;
             this._state = this.prev;
             this.prev = this.medium;
